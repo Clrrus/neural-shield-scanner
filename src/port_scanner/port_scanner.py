@@ -7,10 +7,10 @@ import threading
 import queue
 
 def scan_port(target, port):
-    for _ in range(2):  # Her port için 2 deneme yapacak
+    for _ in range(2): 
         try:
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            socket.setdefaulttimeout(2.0)  # Timeout süresini artırdık
+            socket.setdefaulttimeout(2.0)
             result = s.connect_ex((target, port))
             if result == 0:
                 try:
@@ -31,7 +31,7 @@ def scan_port(target, port):
 
 def run_scanner():
     port_scan_type = 2
-    max_threads = 25  # Thread sayısını daha da azalttık
+    max_threads = 25 
 
     scan_type = input("Scan type (1 for single IP, 2 for IP range): ")
 
@@ -66,7 +66,6 @@ def run_scanner():
             target = str(ip)
             print(f"\nScanning target: {target}")
             
-            # Port tarama aralığını belirle
             if port_scan_type == 1:
                 ports_to_scan = POPULAR_PORTS
                 print("Scanning popular ports...")
