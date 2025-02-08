@@ -2,6 +2,9 @@ import sys
 import socket
 from datetime import datetime
 import ipaddress
+from populer_ports import POPULAR_PORTS
+
+port_scan_type = 1  # 1: Popüler portlar, 2: Geniş port taraması
 
 scan_type = input("Scan type (1 for single IP, 2 for IP range): ")
 
@@ -36,7 +39,15 @@ try:
         target = str(ip)
         print(f"\nScanning target: {target}")
         
-        for port in range(1, 9000):
+        # Port tarama aralığını belirle
+        if port_scan_type == 1:
+            ports_to_scan = POPULAR_PORTS
+            print("Scanning popular ports...")
+        else:
+            ports_to_scan = range(1, 10001)
+            print("Scanning ports 1-10000...")
+        
+        for port in ports_to_scan:
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             socket.setdefaulttimeout(0.5)
 
