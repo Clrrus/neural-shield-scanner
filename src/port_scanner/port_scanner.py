@@ -31,7 +31,8 @@ def scan_port(target, port):
 
 def run_scanner():
     port_scan_type = 2
-    max_threads = 25 
+    max_threads = 25
+    TIMEOUT_SECONDS = 240  # 4 dakika
 
     scan_type = input("Scan type (1 for single IP, 2 for IP range): ")
 
@@ -65,6 +66,7 @@ def run_scanner():
         for ip in targets:
             target = str(ip)
             print(f"\nScanning target: {target}")
+            start_time = datetime.now()
             
             if port_scan_type == 1:
                 ports_to_scan = POPULAR_PORTS
@@ -79,6 +81,10 @@ def run_scanner():
             def worker():
                 while True:
                     port = q.get()
+                    if (datetime.now() - start_time).total_seconds() > TIMEOUT_SECONDS:
+                        print(f"Timeout reached for {target}. Moving to next target...")
+                        q.task_done()
+                        continue
                     result = scan_port(target, port)
                     if result[1]:
                         open_ports.append(result)
