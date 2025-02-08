@@ -82,7 +82,6 @@ def run_scanner():
                 while True:
                     port = q.get()
                     if (datetime.now() - start_time).total_seconds() > TIMEOUT_SECONDS:
-                        print(f"Timeout reached for {target}. Moving to next target...")
                         q.task_done()
                         continue
                     result = scan_port(target, port)
