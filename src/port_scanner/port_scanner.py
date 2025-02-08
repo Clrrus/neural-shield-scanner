@@ -2,9 +2,9 @@ import sys
 import socket
 from datetime import datetime
 import ipaddress
-from populer_ports import POPULAR_PORTS
+from populer_ports import POPULAR_PORTS, POPULER_UDP_PORTS
 
-port_scan_type = 1  # 1: Popüler portlar, 2: Geniş port taraması
+port_scan_type = 2  # 1: Popüler portlar, 2: Geniş port taraması
 
 scan_type = input("Scan type (1 for single IP, 2 for IP range): ")
 
@@ -47,22 +47,48 @@ try:
             ports_to_scan = range(1, 10001)
             print("Scanning ports 1-10000...")
         
+        # TCP Taraması
+        print("\nStarting TCP scan...")
         for port in ports_to_scan:
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             socket.setdefaulttimeout(0.5)
-
+            
             result = s.connect_ex((target, port))
             if result == 0:
                 try:
                     service = socket.getservbyport(port, 'tcp')
                 except:
                     service = "unknown"
-                    
                 print("Port {:<6} | State: open | Protocol: TCP | Service: {}".format(port, service))
             s.close()
+
+        # UDP Taraması
+        print("\nStarting UDP scan...")
+        for port in POPULER_UDP_PORTS:  # UDP için sadece popüler UDP portlarını kullan
+            try:
+                s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+                socket.setdefaulttimeout(1)
+                
+                # UDP için test mesajı gönder
+                s.sendto(b"", (target, port))
+                data, addr = s.recvfrom(1024)
+                
+                try:
+                    service = socket.getservbyport(port, 'udp')
+                except:
+                    service = "unknown"
+                print("Port {:<6} | State: open | Protocol: UDP | Service: {}".format(port, service))
+            
+            except socket.error:
+                pass
+            finally:
+                s.close()
+
 except KeyboardInterrupt:
     print("\nExiting program.")
     sys.exit()
-except socket.error:
-    print("\nCould not connect to the target IP")
+except socket.error as e:
+    print(f"\nCould not connect to the target IP: {e}")
     sys.exit()
+
+print("\nScan completed!")
