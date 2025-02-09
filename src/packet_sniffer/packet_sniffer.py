@@ -7,10 +7,10 @@ TAB_2 = '\t\t - '
 TAB_3 = '\t\t\t - '
 TAB_4 = '\t\t\t\t - '
 
-DATA_TAB_1 = '\t '
-DATA_TAB_2 = '\t\t '
-DATA_TAB_3 = '\t\t\t '
-DATA_TAB_4 = '\t\t\t\t '
+# DATA_TAB_1 = '\t '
+# DATA_TAB_2 = '\t\t '
+# DATA_TAB_3 = '\t\t\t '
+# DATA_TAB_4 = '\t\t\t\t '
 
 def main():
     conn = socket.socket(socket.AF_PACKET, socket.SOCK_RAW, socket.ntohs(3))
@@ -51,11 +51,13 @@ def main():
                 # print(TAB_2 + 'Data:')
                 # print(format_multi_line(DATA_TAB_3, data))
             else:
-                print(TAB_1 + 'Data:')
-                print(format_multi_line(DATA_TAB_2, data))
+                # print(TAB_1 + 'Data:')
+                # print(format_multi_line(DATA_TAB_2, data))
+                pass
         else:
-            print(TAB_1 + 'Data:')
-            print(format_multi_line(DATA_TAB_1, data))
+            # print(TAB_1 + 'Data:')
+            # print(format_multi_line(DATA_TAB_1, data))
+            pass
             
 
 
@@ -89,8 +91,8 @@ def tcp_segment(data):
     flag_psh = (offset_reserved_flags & 8) >> 3
     flag_rst = (offset_reserved_flags & 4) >> 2
     flag_syn = (offset_reserved_flags & 2) >> 1
-    flag_fin = (offset_reserved_flags & 1)
-    return src_port, dest_port, sequence, acknowledgement, offset, flag_urg, flag_ack, flag_psh, flag_rst, flag_syn, flag_fin, data[offset:]
+    flag_fin = offset_reserved_flags & 1
+    return src_port, dest_port, sequence, acknowledgement, flag_urg, flag_ack, flag_psh, flag_rst, flag_syn, flag_fin, data[offset:]
 
 def udp_segment(data):
     src_port, dest_port, size = struct.unpack('! H H 2x H', data[:8])
