@@ -57,16 +57,16 @@ def main(target_range):
     
     active_ips = discover_active_ips(target_range)
     
-    print("\nAktif IP'ler:")
+    print("\nActive IPs:")
     for ip in active_ips:
         print(f"- {ip}")
-    print(f"\nToplam {len(active_ips)} aktif IP bulundu.")
+    print(f"\n{len(active_ips)} active ip found.")
 
     if active_ips:
-        print("\nIP adresleri port taramasına gönderiliyor...")
+        print("\nIP addresses are being sent to port scanning...")
         return active_ips
     else:
-        print("\nAktif IP adresi bulunamadı.")
+        print("\nNo active ip address found.")
         return []
 
 # if __name__ == "__main__":
