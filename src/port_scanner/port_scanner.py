@@ -97,7 +97,7 @@ def run_scanner():
                 else:
                     print(f"\nNo open ports found for {target}")
                 
-                print("-" * 50)
+                print("\n"+"-" * 50)
                 
     except KeyboardInterrupt:
         print("\nExiting program.")
