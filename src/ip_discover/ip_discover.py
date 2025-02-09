@@ -23,7 +23,7 @@ def arp_scan() -> set:
         output = subprocess.check_output(["arp", "-a"], encoding="utf-8", errors="ignore")
 
         for line in output.splitlines():
-            if "(incomplete)" in line:
+            if "incomplete" in line:
                 continue
             match = re.search(r"\((\d{1,3}(?:\.\d{1,3}){3})\)", line)
             if match:
