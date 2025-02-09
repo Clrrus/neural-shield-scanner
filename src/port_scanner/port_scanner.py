@@ -6,6 +6,11 @@ from port_scanner.populer_ports import POPULAR_PORTS
 from ip_discover.ip_discover import main as ip_discover
 from concurrent.futures import ThreadPoolExecutor
 from typing import List, Tuple
+import json
+
+with open("config.json", "r") as f:
+    config_file = json.load(f)
+
 
 def scan_port(target_port: Tuple[str, int]) -> Tuple[int, bool, str]:
     target, port = target_port
@@ -32,17 +37,17 @@ def scan_port(target_port: Tuple[str, int]) -> Tuple[int, bool, str]:
     return port, False, None
 
 def run_scanner():
-    MAX_WORKERS = 150  # Thread sayısını dengeli bir değere ayarladım
-    BATCH_SIZE = 200  # Batch size'ı dengeli bir değere ayarladım
+    MAX_WORKERS = config_file["scanner"]["thread_count"]  # Thread sayısını dengeli bir değere ayarladım
+    BATCH_SIZE = config_file["scanner"]["batch_size"]  # Batch size'ı dengeli bir değere ayarladım
     
-    scan_type = input("Scan type (1 for single IP, 2 for IP range): ")
+    scan_type = str(config_file["scanner"]["scan_type"])
 
     if scan_type not in ['1', '2']:
         print("Please enter a valid option (1 or 2)")
         sys.exit()
 
     if scan_type == '1':
-        target = input("Enter target IP: ")
+        target = str(config_file["scanner"]["target"])
         try:
             ipaddress.ip_address(target)
             targets = [target]
@@ -50,7 +55,7 @@ def run_scanner():
             print("Invalid IP address")
             sys.exit()
     else:
-        target_range = input("Target IP range (example: 192.168.1.0/24): ")
+        target_range = str(config_file["scanner"]["target_range"])
         try:
             # ip_network = ipaddress.ip_network(target_range)
             # targets = list(ip_network.hosts())
