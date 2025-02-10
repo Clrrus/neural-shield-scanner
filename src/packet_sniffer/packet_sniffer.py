@@ -9,7 +9,6 @@ import textwrap
 import json
 from datetime import datetime
 import os
-from mac_finder import main as mac_finder
 
 TAB_1 = '\t - '
 TAB_2 = '\t\t - '
@@ -23,7 +22,6 @@ TAB_4 = '\t\t\t\t - '
 
 def main():
     conn = socket.socket(socket.AF_PACKET, socket.SOCK_RAW, socket.ntohs(3))
-    scanner_mac_address = mac_finder()
 
     def write_to_json(packet_data):
         file_path = 'logs/packet_sniffer_logs/sniffer_logs.json'
@@ -59,48 +57,48 @@ def main():
                 'protocol': eth_proto
             }
         }
-        if src_mac != scanner_mac_address:
-            if eth_proto == 8:
-                (version, header_length, ttl, proto, src, target, data) = ipv4_packet(data)
-                packet_data['ipv4_packet'] = {
-                    'version': version,
-                    'header_length': header_length,
-                    'ttl': ttl,
-                    'protocol': proto,
-                    'source': src,
-                    'target': target
-                }
 
-                if proto == 1:
-                    icmp_type, code, checksum, data = icmp_packet(data)
-                    packet_data['icmp_packet'] = {
-                        'type': icmp_type,
-                        'code': code,
-                        'checksum': checksum
+        if eth_proto == 8:
+            (version, header_length, ttl, proto, src, target, data) = ipv4_packet(data)
+            packet_data['ipv4_packet'] = {
+                'version': version,
+                'header_length': header_length,
+                'ttl': ttl,
+                'protocol': proto,
+                'source': src,
+                'target': target
+            }
+
+            if proto == 1:
+                icmp_type, code, checksum, data = icmp_packet(data)
+                packet_data['icmp_packet'] = {
+                    'type': icmp_type,
+                    'code': code,
+                    'checksum': checksum
+                }
+            elif proto == 6:
+                src_port, dest_port, sequence, acknowledgement, flag_urg, flag_ack, flag_psh, flag_rst, flag_syn, flag_fin, data = tcp_segment(data)
+                packet_data['tcp_segment'] = {
+                    'source_port': src_port,
+                    'destination_port': dest_port,
+                    'sequence': sequence,
+                    'acknowledgement': acknowledgement,
+                    'flags': {
+                        'URG': flag_urg,
+                        'ACK': flag_ack,
+                        'PSH': flag_psh,
+                        'RST': flag_rst,
+                        'SYN': flag_syn,
+                        'FIN': flag_fin
                     }
-                elif proto == 6:
-                    src_port, dest_port, sequence, acknowledgement, flag_urg, flag_ack, flag_psh, flag_rst, flag_syn, flag_fin, data = tcp_segment(data)
-                    packet_data['tcp_segment'] = {
-                        'source_port': src_port,
-                        'destination_port': dest_port,
-                        'sequence': sequence,
-                        'acknowledgement': acknowledgement,
-                        'flags': {
-                            'URG': flag_urg,
-                            'ACK': flag_ack,
-                            'PSH': flag_psh,
-                            'RST': flag_rst,
-                            'SYN': flag_syn,
-                            'FIN': flag_fin
-                        }
-                    }
-                elif proto == 17:
-                    src_port, dest_port, length, data = udp_segment(data)
-                    packet_data['udp_segment'] = {
-                        'source_port': src_port,
-                        'destination_port': dest_port,
-                        'size': length
-                    }
+                }
+            elif proto == 17:
+                src_port, dest_port, length, data = udp_segment(data)
+                packet_data['udp_segment'] = {
+                    'source_port': src_port,
+                    'destination_port': dest_port,
+                    'size': length
+                }
         
         write_to_json(packet_data)
 
