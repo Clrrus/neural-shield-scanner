@@ -5,7 +5,7 @@ import subprocess
 if __name__ == "__main__":
     while True:
         try:
-            subprocess.run(["python", "src/packet_sniffer/packet_sniffer.py"])
+            subprocess.run(["python3", "src/packet_sniffer/packet_sniffer.py"])
             run_scanner()
             print("Scanning completed successfully. Next scan in 1 hour...")
             time.sleep(3600)
