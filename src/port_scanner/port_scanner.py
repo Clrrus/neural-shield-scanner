@@ -87,7 +87,7 @@ def run_scanner():
                     if port not in common_ports:
                         scan_tasks.append((target, port))
 
-                other_common_ports = [10010, 32768, 32771, 49152, 49153, 49154, 49155, 49156, 49157, 50000]
+                other_common_ports = [10010, 32768, 32771, 49152, 49153, 49154, 49155, 49156, 49157, 50000,62078]
                 for iport in other_common_ports:
                     if port not in common_ports:
                         scan_tasks.append((target, port))
