@@ -1,4 +1,6 @@
-from port_scanner.port_scanner import run_scanner
+import subprocess
+import time
 
-if __name__ == "__main__":
-    run_scanner()
+while True:
+    subprocess.run(["python3", "port_scanner/port_scanner.py"])
+    time.sleep(3600)
