@@ -23,25 +23,22 @@ if __name__ == "__main__":
     try:
         print("Starting packet sniffer process...")
         sniffer_process = Process(target=run_sniffer)
-        sniffer_process.daemon = True  # Ana program kapandığında bu process'i otomatik sonlandır
         sniffer_process.start()
         processes.append(sniffer_process)
         print("Packet sniffer process started successfully")
         
+        # Port scanner'ı başlatmadan önce kısa bir bekleme ekleyelim
+        time.sleep(2)
+        
         print("Starting port scanner process...")
         scanner_process = Process(target=run_port_scanner)
-        scanner_process.daemon = True  # Ana program kapandığında bu process'i otomatik sonlandır
         scanner_process.start()
         processes.append(scanner_process)
         print("Port scanner process started successfully")
         
-        # Ana program çalışır durumda kalsın
-        while True:
-            time.sleep(1)
-            # Process'lerin durumunu kontrol et
-            if not all(p.is_alive() for p in processes):
-                print("One or more processes have stopped unexpectedly!")
-                break
+        # Process'leri bekle
+        for process in processes:
+            process.join()
             
     except KeyboardInterrupt:
         print("\nMain program received keyboard interrupt...")
