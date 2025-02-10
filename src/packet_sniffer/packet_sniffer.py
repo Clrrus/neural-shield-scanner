@@ -1,3 +1,8 @@
+"""
+Bu Kod MacOs Cihazlarda çalışmaz çünkü AF_PACKET Macos Cihazlarda çalışmaz. Kod öalıştırılacaksa Linux
+Cihazlarda çalıştırılmalıdır.
+"""
+
 import socket
 import struct
 import textwrap
