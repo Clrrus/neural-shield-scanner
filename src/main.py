@@ -4,6 +4,7 @@ from multiprocessing import Process
 from packet_sniffer.packet_sniffer import main as run_sniffer
 
 def run_port_scanner():
+    print("Port scanner started...")
     while True:
         try:
             run_scanner()
@@ -18,15 +19,27 @@ def run_port_scanner():
             continue
 
 if __name__ == "__main__":
+    processes = []
     try:
+        # Start packet sniffer
         sniffer_process = Process(target=run_sniffer)
         sniffer_process.start()
+        processes.append(sniffer_process)
         
-        run_port_scanner()
+        # Start port scanner
+        scanner_process = Process(target=run_port_scanner)
+        scanner_process.start()
+        processes.append(scanner_process)
         
+        # Wait for processes to complete
+        for process in processes:
+            process.join()
+            
     except KeyboardInterrupt:
-        print("Main program stopping...")
+        print("\nMain program stopping...")
     finally:
-        if 'sniffer_process' in locals():
-            sniffer_process.terminate()
-            sniffer_process.join()
+        # Terminate all processes
+        for process in processes:
+            if process.is_alive():
+                process.terminate()
+                process.join()
