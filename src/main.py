@@ -5,7 +5,7 @@ if __name__ == "__main__":
     while True:
         try:
             run_scanner()
-            print("Scanning Completed Successfully. Next Scan will be occured in 1 hour")
+            print("Scanning completed successfully. Next scan in 1 hour...")
             time.sleep(3600)
         except KeyboardInterrupt:
             print("Exiting program...")
