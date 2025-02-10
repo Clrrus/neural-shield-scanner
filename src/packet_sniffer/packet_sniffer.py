@@ -1,6 +1,6 @@
 """
-Bu Kod MacOs Cihazlarda çalışmaz çünkü AF_PACKET Macos Cihazlarda çalışmaz. Kod öalıştırılacaksa Linux
-Cihazlarda çalıştırılmalıdır.
+Bu Kod MacOs Cihazlarda çalışmaz çünkü AF_PACKET soket türü Macos Cihazlarda desteklenmiyor. Kod öalıştırılacaksa Linux
+Cihazlarda çalışır anca.
 """
 
 import socket
