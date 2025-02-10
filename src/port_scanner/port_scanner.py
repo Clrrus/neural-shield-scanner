@@ -116,7 +116,5 @@ def run_scanner():
         print("\nCould not connect to the target IP")
         sys.exit()
 
-# if __name__ == "__main__":
-#     run_scanner()
-
-run_scanner()
+if __name__ == "__main__":
+    run_scanner()
