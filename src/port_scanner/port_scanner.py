@@ -7,8 +7,6 @@ from ip_discover.ip_discover import main as ip_discover
 from concurrent.futures import ThreadPoolExecutor
 from typing import List, Tuple
 import json
-import threading
-from packet_sniffer.packet_sniffer import start_sniffer
 
 with open("config.json", "r") as f:
     config_file = json.load(f)
@@ -39,10 +37,6 @@ def scan_port(target_port: Tuple[str, int]) -> Tuple[int, bool, str]:
     return port, False, None
 
 def run_scanner():
-    # Packet sniffer'ı arka planda başlat
-    sniffer_thread = threading.Thread(target=start_sniffer, daemon=True)
-    sniffer_thread.start()
-    
     MAX_WORKERS = config_file["scanner"]["thread_count"]  # Thread sayısını dengeli bir değere ayarladım
     BATCH_SIZE = config_file["scanner"]["batch_size"]  # Batch size'ı dengeli bir değere ayarladım
     
