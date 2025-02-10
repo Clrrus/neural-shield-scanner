@@ -105,14 +105,5 @@ def format_multi_line(prefix, string, size=80):
         if size % 2:
             size -= 1
     return '\n'.join([prefix + line for line in textwrap.wrap(string, size)])
-
-def start_sniffer():
-    try:
-        main()
-    except KeyboardInterrupt:
-        print("\nPacket sniffer durduruldu.")
-    except Exception as e:
-        print(f"\nPacket sniffer hatası: {str(e)}")
-
-if __name__ == "__main__":
-    start_sniffer()
+        
+main()
