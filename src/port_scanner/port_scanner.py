@@ -43,8 +43,8 @@ def run_scanner():
     sniffer_thread = threading.Thread(target=start_sniffer, daemon=True)
     sniffer_thread.start()
     
-    MAX_WORKERS = config_file["scanner"]["thread_count"]
-    BATCH_SIZE = config_file["scanner"]["batch_size"]
+    MAX_WORKERS = config_file["scanner"]["thread_count"]  # Thread sayısını dengeli bir değere ayarladım
+    BATCH_SIZE = config_file["scanner"]["batch_size"]  # Batch size'ı dengeli bir değere ayarladım
     
     scan_type = str(config_file["scanner"]["scan_type"])
 
