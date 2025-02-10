@@ -68,10 +68,10 @@ POPULAR_PORTS = [
 ## 🔧 Kullanım
 
 1. `config.json` dosyasını düzenleyin
-2. Programı çalıştırın:
+2. Programı çalıştırın: (**Packet Sniffer İçin Root Yetkisi İstenmektedir**)
 ```
 bash
-python scanner.py
+sudo python src/main.py
 ```
 
 ## ⚠️ Bilgilendirme
