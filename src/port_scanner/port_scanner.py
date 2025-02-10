@@ -7,6 +7,8 @@ from ip_discover.ip_discover import main as ip_discover
 from concurrent.futures import ThreadPoolExecutor
 from typing import List, Tuple
 import json
+import threading
+from packet_sniffer.packet_sniffer import start_sniffer
 
 with open("config.json", "r") as f:
     config_file = json.load(f)
@@ -37,8 +39,12 @@ def scan_port(target_port: Tuple[str, int]) -> Tuple[int, bool, str]:
     return port, False, None
 
 def run_scanner():
-    MAX_WORKERS = config_file["scanner"]["thread_count"]  # Thread sayısını dengeli bir değere ayarladım
-    BATCH_SIZE = config_file["scanner"]["batch_size"]  # Batch size'ı dengeli bir değere ayarladım
+    # Packet sniffer'ı arka planda başlat
+    sniffer_thread = threading.Thread(target=start_sniffer, daemon=True)
+    sniffer_thread.start()
+    
+    MAX_WORKERS = config_file["scanner"]["thread_count"]
+    BATCH_SIZE = config_file["scanner"]["batch_size"]
     
     scan_type = str(config_file["scanner"]["scan_type"])
 
@@ -86,7 +92,12 @@ def run_scanner():
                 for port in range(1, 10001):
                     if port not in common_ports:
                         scan_tasks.append((target, port))
-                
+
+                other_common_ports = [10010, 32768, 32771, 49152, 49153, 49154, 49155, 49156, 49157, 50000]
+                for iport in other_common_ports:
+                    if port not in common_ports:
+                        scan_tasks.append((target, port))
+
                 for i in range(0, len(scan_tasks), BATCH_SIZE):
                     batch = scan_tasks[i:i + BATCH_SIZE]
                     results = executor.map(scan_port, batch)
