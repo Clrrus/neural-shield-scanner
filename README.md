@@ -24,14 +24,14 @@ Tarama ayarlarını `config.json` dosyası üzerinden yapılandırabilirsiniz:
 ```
 json
 {
-"scanner": {
-"scan_type": "2",
-"port_range_type": "2",
-"target": "192.168.1.1",
-"target_range": "192.168.1.0/24",
-"thread_count": 150,
-"batch_size": 200
-}
+    "scanner": {
+        "scan_type": "2",
+        "port_range_type": "2",
+        "target": "192.168.1.1",
+        "target_range": "192.168.1.0/24",
+        "thread_count": 150,
+        "batch_size": 200
+    }
 }
 ```
 
