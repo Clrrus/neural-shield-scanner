@@ -53,7 +53,7 @@ def discover_active_ips(network: str, max_workers: int = 50) -> List[str]:
 
 def main(target_range):
     # network = input("Ağ aralığını CIDR formatında girin (örn: 192.168.1.0/24): ")
-    print(f"\n{target_range} ağında IP taraması başlatılıyor...")
+    print(f"\nStarting IP discovery for {target_range}")
     
     active_ips = discover_active_ips(target_range)
     
