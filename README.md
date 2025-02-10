@@ -45,11 +45,11 @@ json
 - `batch_size`: İşlem başına batch boyutu
 
 #### Port Aralıkları:
-- `port_range_type`: 1
+- `port_range_type`: 1 -> Daha fazla port tarandığı için daha yavaş çalışır.
 ```
 1 ile 10000 arasındaki portlara ek olarak "10010, 32768, 32771, 49152, 49153, 49154, 49155, 49156, 49157, 50000,62078" portları.
 ```
-- `port_range_type`: 2
+- `port_range_type`: 2 -> Popüler portlar taranır bu yüzden daha hızlı çalışır.
 ```
 python
 POPULAR_PORTS = [
