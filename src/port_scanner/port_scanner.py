@@ -83,9 +83,14 @@ def run_scanner():
                 for port in common_ports:
                     scan_tasks.append((target, port))
                 
-                for port in range(1, 10001):
-                    if port not in common_ports:
-                        scan_tasks.append((target, port))
+                if config_file["scanner"]["port_range_type"] == "1":
+                    for port in range(1, 10001):
+                        if port not in common_ports:
+                            scan_tasks.append((target, port))
+                elif config_file["scanner"]["port_range_type"] == "2":
+                    for port in POPULAR_PORTS:
+                        if port not in common_ports:
+                            scan_tasks.append((target, port))
 
                 other_common_ports = [10010, 32768, 32771, 49152, 49153, 49154, 49155, 49156, 49157, 50000,62078]
                 for iport in other_common_ports:
