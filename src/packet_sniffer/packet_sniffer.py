@@ -180,4 +180,5 @@ def format_multi_line(prefix, string, size=80):
             size -= 1
     return '\n'.join([prefix + line for line in textwrap.wrap(string, size)])
         
-main()
+if __name__ == "__main__":
+    main()
