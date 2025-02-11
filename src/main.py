@@ -1,18 +1,39 @@
 from port_scanner.port_scanner import run_scanner
 import time
 import subprocess
+from threading import Thread
 
-if __name__ == "__main__":
+def run_packet_sniffer():
+    try:
+        subprocess.run(["python3", "src/packet_sniffer/packet_sniffer.py"], check=True)
+    except subprocess.CalledProcessError as e:
+        print(f"Packet sniffer error: {e}")
+    except KeyboardInterrupt:
+        print("Packet sniffer stopping...")
+
+def run_port_scanner():
     while True:
         try:
-            # subprocess.run(["python3", "src/packet_sniffer/packet_sniffer.py"])
             run_scanner()
             print("Scanning completed successfully. Next scan in 1 hour...")
             time.sleep(3600)
         except KeyboardInterrupt:
-            print("Exiting program...")
+            print("Port scanner stopping...")
             break
         except Exception as e:
-            print(f"Error: {e}")
+            print(f"Port Scanner Error: {e}")
             time.sleep(5)
             continue
+
+if __name__ == "__main__":
+    try:
+        # Packet sniffer'ı ayrı bir thread'de başlat
+        sniffer_thread = Thread(target=run_packet_sniffer)
+        sniffer_thread.daemon = True  # Ana program kapandığında thread'i otomatik sonlandır
+        sniffer_thread.start()
+        
+        # Port scanner'ı ana thread'de çalıştır
+        run_port_scanner()
+        
+    except KeyboardInterrupt:
+        print("\nMain program stopping...")
