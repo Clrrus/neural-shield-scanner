@@ -28,12 +28,10 @@ def run_port_scanner():
 
 if __name__ == "__main__":
     try:
-        # Packet sniffer'ı ayrı bir thread'de başlat
         sniffer_thread = Thread(target=run_packet_sniffer)
-        sniffer_thread.daemon = True  # Ana program kapandığında thread'i otomatik sonlandır
+        sniffer_thread.daemon = True
         sniffer_thread.start()
         
-        # Port scanner'ı ana thread'de çalıştır
         run_port_scanner()
         
     except KeyboardInterrupt:
