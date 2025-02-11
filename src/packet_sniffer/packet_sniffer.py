@@ -1,6 +1,9 @@
 """
-Bu Kod MacOs Cihazlarda çalışmaz çünkü AF_PACKET soket türü Macos Cihazlarda desteklenmiyor. Kod öalıştırılacaksa Linux
-Cihazlarda çalışır anca.
+Bu Kod MacOs Cihazlarda çalışmaz çünkü AF_PACKET soket türü Macos Cihazlarda desteklenmiyor. 
+Kod öalıştırılacaksa Linux cihazlarda çalışır anca.
+
+Packet Sniffer loglarının yazıldığı dosya: logs/packet_sniffer_logs/sniffer_logs.json
+Eğer terminalde gözükmesini istiyorsan printlerin başındaki commentleri kaldır
 """
 
 import socket
