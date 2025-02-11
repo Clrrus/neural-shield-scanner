@@ -1,11 +1,12 @@
 from port_scanner.port_scanner import run_scanner
+from packet_sniffer.packet_sniffer import main as run_packet_sniffer
 import time
 import subprocess
 from threading import Thread
 
 def run_packet_sniffer():
     try:
-        subprocess.run(["python3", "src/packet_sniffer/packet_sniffer.py"], check=True)
+        run_packet_sniffer()
     except subprocess.CalledProcessError as e:
         print(f"Packet sniffer error: {e}")
     except KeyboardInterrupt:
