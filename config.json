@@ -1,6 +1,6 @@
 {
     "scanner" : {
-        "scan_type" : "1",
+        "scan_type" : "2",
         "port_range_type" : "2",
         "target" : "192.168.1.9",
         "target_range" : "192.168.1.0/24",
