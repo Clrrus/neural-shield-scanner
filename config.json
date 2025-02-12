@@ -1,5 +1,5 @@
 {
-    "sudo_password" : "200661",
+    "sudo_password" : "password",
     "scanner" : {
         "scan_type" : "2",
         "port_range_type" : "2",
