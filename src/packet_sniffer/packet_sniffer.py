@@ -83,9 +83,24 @@ def main():
             raw_data, addr = conn.recvfrom(65536)
             dest_mac, src_mac, eth_proto, data = ethernet_frame(raw_data)
             
+            # Varsayılan değerleri başlangıçta tanımlayalım
+            src_port = None
+            dest_port = None
+            packet_data = None
+            
             # IPv4 paketlerini kontrol et
             if eth_proto == 8:
                 (version, header_length, ttl, proto, src_ip, dest_ip, data) = ipv4_packet(data)
+                
+                # Paket verisini oluştur
+                packet_data = {
+                    'timestamp': datetime.now().isoformat(),
+                    'ethernet_frame': {
+                        'destination': dest_mac,
+                        'source': src_mac,
+                        'protocol': eth_proto
+                    }
+                }
                 
                 # TCP veya UDP trafiği için port ve bayrak bilgilerini kontrol et
                 tcp_flags = None
@@ -103,87 +118,19 @@ def main():
                     src_port, dest_port, *_ = udp_segment(data)
                 
                 # Port scanner trafiği ise kaydetme
-                if is_port_scan_traffic(src_ip, dest_ip, src_port, dest_port, proto, tcp_flags):
+                if src_port and dest_port and is_port_scan_traffic(src_ip, dest_ip, src_port, dest_port, proto, tcp_flags):
                     continue
 
-                packet_data = {
-                    'timestamp': datetime.now().isoformat(),
-                    'ethernet_frame': {
-                        'destination': dest_mac,
-                        'source': src_mac,
-                        'protocol': eth_proto
-                    }
-                }
-
-                if eth_proto == 8:
-                    (version, header_length, ttl, proto, src, target, data) = ipv4_packet(data)
-                    packet_data['ipv4_packet'] = {
-                        'version': version,
-                        'header_length': header_length,
-                        'ttl': ttl,
-                        'protocol': proto,
-                        'source': src,
-                        'target': target
-                    }
-                    # print(TAB_1 + 'IPv4 Packet:')
-                    # print(TAB_2 + 'Version: {}, Header Length: {}, TTL: {}'.format(version, header_length, ttl))
-                    # print(TAB_2 + 'Protocol: {}'.format(proto))
-                    # print(TAB_2 + 'Source: {}, Target: {}'.format(src, target))
-
-                    if proto == 1:
-                        icmp_type, code, checksum, data = icmp_packet(data)
-                        packet_data['icmp_packet'] = {
-                            'type': icmp_type,
-                            'code': code,
-                            'checksum': checksum
-                        }
-                        # print(TAB_1 + 'ICMP Packet:')
-                        # print(TAB_2 + 'Type: {}, Code: {}, Checksum: {}'.format(icmp_type, code, checksum))
-                        # # print(TAB_2 + 'Data:')
-                        # # print(format_multi_line(DATA_TAB_3, data))
-                    elif proto == 6:
-                        src_port, dest_port, sequence, acknowledgement, flag_urg, flag_ack, flag_psh, flag_rst, flag_syn, flag_fin, data = tcp_segment(data)
-                        packet_data['tcp_segment'] = {
-                            'source_port': src_port,
-                            'destination_port': dest_port,
-                            'sequence': sequence,
-                            'acknowledgement': acknowledgement,
-                            'flags': {
-                                'URG': flag_urg,
-                                'ACK': flag_ack,
-                                'PSH': flag_psh,
-                                'RST': flag_rst,
-                                'SYN': flag_syn,
-                                'FIN': flag_fin
-                            }
-                        }
-                        # print(TAB_1 + 'TCP Segment:')
-                        # print(TAB_2 + 'Source Port: {}, Destination Port: {}'.format(src_port, dest_port))
-                        # print(TAB_2 + 'Sequence: {}, Acknowledgement: {}'.format(sequence, acknowledgement))
-                        # print(TAB_2 + 'Flags: {}')
-                        # print(TAB_3 + 'URG: {}, ACK: {}, PSH: {}, RST: {}, SYN: {}, FIN: {}'.format(flag_urg ,flag_ack,flag_ack,flag_psh, flag_rst, flag_syn, flag_fin))
-                        # # print(TAB_2 + 'Data:')
-                        # # print(format_multi_line(DATA_TAB_3, data))
-                    elif proto == 17:
-                        src_port, dest_port, length, data = udp_segment(data)
-                        packet_data['udp_segment'] = {
-                            'source_port': src_port,
-                            'destination_port': dest_port,
-                            'size': length
-                        }
-                        # print(TAB_1 + 'UDP Segment:')
-                        # print(TAB_2 + 'Source Port: {}, Destination Port: {}'.format(src_port, dest_port))
-                        # print(TAB_2 + 'Size: {}'.format(length))
-                        # # print(TAB_2 + 'Data:')
-                        # # print(format_multi_line(DATA_TAB_3, data))
+                # Paket verisi varsa kaydet
+                if packet_data:
+                    write_to_json(packet_data)
+                
         except Exception as e:
             print(f"Error: {e}")
             time.sleep(5)
         except KeyboardInterrupt:
             print("Exiting program...")
             break
-        
-        write_to_json(packet_data)
 
 def ethernet_frame(data):
     dest_mac, src_mac, proto = struct.unpack('! 6s 6s H', data[:14])
