@@ -27,16 +27,33 @@ TAB_4 = '\t\t\t\t - '
 def main():
     conn = socket.socket(socket.AF_PACKET, socket.SOCK_RAW, socket.ntohs(3))
 
-    # Port scanner'ın IP adresini beyaz listeye alalım
+    # Port scanner'ın IP adresini ve yaygın port tarama portlarını beyaz listeye alalım
     whitelist_ips = {
         socket.gethostbyname(socket.gethostname()),  # Yerel makine IP'si
         '127.0.0.1'  # Localhost
     }
+    
+    # Port tarama işleminde kullanılan yaygın portlar
+    scanner_ports = set(range(1, 1025))  # Well-known portlar
 
-    def is_port_scan_traffic(src_ip, dest_ip, src_port, dest_port):
+    def is_port_scan_traffic(src_ip, dest_ip, src_port, dest_port, proto, flags=None):
         # Port scanner trafiğini kontrol et
-        if src_ip in whitelist_ips or dest_ip in whitelist_ips:
-            return True
+        if src_ip in whitelist_ips:
+            # Kaynak IP whitelist'te ve hedef port tarama portlarından biriyse
+            if dest_port in scanner_ports:
+                return True
+            # TCP SYN taraması kontrolü
+            if proto == 6 and flags and flags.get('SYN', False) and not flags.get('ACK', False):
+                return True
+        
+        if dest_ip in whitelist_ips:
+            # Hedef IP whitelist'te ve kaynak port tarama portlarından biriyse
+            if src_port in scanner_ports:
+                return True
+            # TCP RST/ACK yanıtlarını kontrol et
+            if proto == 6 and flags and (flags.get('RST', False) or flags.get('ACK', False)):
+                return True
+        
         return False
 
     def write_to_json(packet_data):
@@ -70,16 +87,24 @@ def main():
             if eth_proto == 8:
                 (version, header_length, ttl, proto, src_ip, dest_ip, data) = ipv4_packet(data)
                 
-                # TCP veya UDP trafiği ise port bilgilerini kontrol et
-                if proto in [6, 17]:  # TCP veya UDP
-                    if proto == 6:
-                        src_port, dest_port, *_ = tcp_segment(data)
-                    else:
-                        src_port, dest_port, *_ = udp_segment(data)
-                    
-                    # Port scanner trafiği ise kaydetme
-                    if is_port_scan_traffic(src_ip, dest_ip, src_port, dest_port):
-                        continue
+                # TCP veya UDP trafiği için port ve bayrak bilgilerini kontrol et
+                tcp_flags = None
+                if proto == 6:  # TCP
+                    src_port, dest_port, *_, flag_urg, flag_ack, flag_psh, flag_rst, flag_syn, flag_fin, _ = tcp_segment(data)
+                    tcp_flags = {
+                        'URG': flag_urg,
+                        'ACK': flag_ack,
+                        'PSH': flag_psh,
+                        'RST': flag_rst,
+                        'SYN': flag_syn,
+                        'FIN': flag_fin
+                    }
+                elif proto == 17:  # UDP
+                    src_port, dest_port, *_ = udp_segment(data)
+                
+                # Port scanner trafiği ise kaydetme
+                if is_port_scan_traffic(src_ip, dest_ip, src_port, dest_port, proto, tcp_flags):
+                    continue
 
                 packet_data = {
                     'timestamp': datetime.now().isoformat(),
