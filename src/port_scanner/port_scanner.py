@@ -14,11 +14,13 @@ with open("config.json", "r") as f:
 
 def scan_port(target_port: Tuple[str, int]) -> Tuple[int, bool, str]:
     target, port = target_port
-    for _ in range(2):  # Her portu 2 kez kontrol et
+    for attempt in range(3):
         try:
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            socket.setdefaulttimeout(1.0)  # Timeout süresini 1 saniyeye çıkardım
+            socket.setdefaulttimeout(2.0)
+            s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             result = s.connect_ex((target, port))
+            
             if result == 0:
                 try:
                     service = socket.getservbyport(port, 'tcp')
@@ -28,17 +30,27 @@ def scan_port(target_port: Tuple[str, int]) -> Tuple[int, bool, str]:
                     s.close()
                     return port, True, "unknown"
             s.close()
-        except:
+            if attempt < 2:
+                continue
+            return port, False, None
+        except socket.timeout:
             try:
                 s.close()
             except:
                 pass
-            continue
+            if attempt < 2:
+                continue
+        except (socket.gaierror, socket.error) as e:
+            try:
+                s.close()
+            except:
+                pass
+            return port, False, None
     return port, False, None
 
 def run_scanner():
-    MAX_WORKERS = config_file["scanner"]["thread_count"]  # Thread sayısını dengeli bir değere ayarladım
-    BATCH_SIZE = config_file["scanner"]["batch_size"]  # Batch size'ı dengeli bir değere ayarladım
+    MAX_WORKERS = min(config_file["scanner"]["thread_count"], 50)
+    BATCH_SIZE = min(config_file["scanner"]["batch_size"], 100)
     
     scan_type = str(config_file["scanner"]["scan_type"])
 
