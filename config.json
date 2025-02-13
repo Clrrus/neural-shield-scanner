@@ -5,7 +5,7 @@
         "port_range_type" : "2",
         "target" : "192.168.1.9",
         "target_range" : "192.168.1.0/24",
-        "thread_count" : 150,
+        "thread_count" : 50,
         "batch_size" : 200
     }
 }
