@@ -48,6 +48,12 @@ json
 - `thread_count`: Eşzamanlı thread sayısı
 - `batch_size`: İşlem başına batch boyutu
 
+#### Thread Count:
+- `thread_count`: 50 -> 50 thread ile tarama yapılır. (Aynı anda 50 port taranır.) Dezavantajı ise ağınıza yük bindirir, sistem kaynaklarını daha fazla kullanır. (10-30 arası ideal)
+
+#### Batch Size:
+- `batch_size`: 200 -> Taramayı gruplara ayırır. Örneğin 200 port taranırken 1000 port taranırken 5 grup oluşturur. Her grup sırasıyla taranır. Bellek kullanımını optimize eder ama ağa yük bindirir. (100-500 arası ideal)
+
 #### Port Aralıkları:
 - `port_range_type`: 1 -> Daha fazla port tarandığı için daha yavaş çalışır.
 ```
