@@ -13,8 +13,8 @@ Bu ağ tarama aracı, belirtilen IP adresleri veya IP aralıklarında port taram
 ## ⚙️ Kurulum
 ```
 bash
-git clone https://github.com/kullaniciadi/network-scanner
-cd network-scanner
+git clone https://github.com/Clrrus/neural-shield-scanner.git
+cd neural-shield-scanner
 pip install -r requirements.txt
 ```
 
