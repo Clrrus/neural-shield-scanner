@@ -7,6 +7,7 @@ from ip_discover.ip_discover import main as ip_discover
 from concurrent.futures import ThreadPoolExecutor
 from typing import List, Tuple
 import json
+import os
 
 with open("config.json", "r") as f:
     config_file = json.load(f)
@@ -49,39 +50,43 @@ def scan_port(target_port: Tuple[str, int]) -> Tuple[int, bool, str]:
     return port, False, None
 
 def run_scanner():
-    MAX_WORKERS = min(config_file["scanner"]["thread_count"], 50)
-    BATCH_SIZE = min(config_file["scanner"]["batch_size"], 100)
+    # Scanner başladığında sinyal dosyası oluştur
+    with open("scanner_running.signal", "w") as f:
+        f.write("1")
     
-    scan_type = str(config_file["scanner"]["scan_type"])
-
-    if scan_type not in ['1', '2']:
-        print("Please enter a valid option (1 or 2)")
-        sys.exit()
-
-    if scan_type == '1':
-        target = str(config_file["scanner"]["target"])
-        try:
-            ipaddress.ip_address(target)
-            targets = [target]
-        except ValueError:
-            print("Invalid IP address")
-            sys.exit()
-    else:
-        target_range = str(config_file["scanner"]["target_range"])
-        try:
-            # ip_network = ipaddress.ip_network(target_range)
-            # targets = list(ip_network.hosts())
-            targets = ip_discover(target_range)
-        except ValueError:
-            print("Invalid IP range format. Please use CIDR notation (example: 192.168.1.0/24)")
-            sys.exit()
-
-    print("-" * 50)
-    print("Scan started at: " + str(datetime.now()))
-    print("Scanning target(s): " + (target if scan_type == '1' else target_range))
-    print("-" * 50)
-
     try:
+        MAX_WORKERS = min(config_file["scanner"]["thread_count"], 50)
+        BATCH_SIZE = min(config_file["scanner"]["batch_size"], 100)
+        
+        scan_type = str(config_file["scanner"]["scan_type"])
+
+        if scan_type not in ['1', '2']:
+            print("Please enter a valid option (1 or 2)")
+            sys.exit()
+
+        if scan_type == '1':
+            target = str(config_file["scanner"]["target"])
+            try:
+                ipaddress.ip_address(target)
+                targets = [target]
+            except ValueError:
+                print("Invalid IP address")
+                sys.exit()
+        else:
+            target_range = str(config_file["scanner"]["target_range"])
+            try:
+                # ip_network = ipaddress.ip_network(target_range)
+                # targets = list(ip_network.hosts())
+                targets = ip_discover(target_range)
+            except ValueError:
+                print("Invalid IP range format. Please use CIDR notation (example: 192.168.1.0/24)")
+                sys.exit()
+
+        print("-" * 50)
+        print("Scan started at: " + str(datetime.now()))
+        print("Scanning target(s): " + (target if scan_type == '1' else target_range))
+        print("-" * 50)
+
         with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
             for ip in targets:
                 target = str(ip)
@@ -128,10 +133,26 @@ def run_scanner():
                 
     except KeyboardInterrupt:
         print("\nExiting program.")
+        # Sinyal dosyasını sil
+        try:
+            os.remove("scanner_running.signal")
+        except:
+            pass
         sys.exit()
     except socket.error:
         print("\nCould not connect to the target IP")
+        # Sinyal dosyasını sil
+        try:
+            os.remove("scanner_running.signal")
+        except:
+            pass
         sys.exit()
+    
+    # Scanner normal şekilde bittiğinde sinyal dosyasını sil
+    try:
+        os.remove("scanner_running.signal")
+    except:
+        pass
 
 if __name__ == "__main__":
     run_scanner()
