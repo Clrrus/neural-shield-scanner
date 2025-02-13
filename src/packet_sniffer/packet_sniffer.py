@@ -24,10 +24,17 @@ TAB_4 = '\t\t\t\t - '
 # DATA_TAB_3 = '\t\t\t '
 # DATA_TAB_4 = '\t\t\t\t '
 
+def is_scanner_running():
+    return os.path.exists("scanner_running.signal")
+
 def main():
     conn = socket.socket(socket.AF_PACKET, socket.SOCK_RAW, socket.ntohs(3))
 
     def write_to_json(packet_data):
+        # Port scanner çalışıyorsa log tutma
+        if is_scanner_running():
+            return
+            
         file_path = 'logs/packet_sniffer_logs/sniffer_logs.json'
         
         # Dosya yoksa boş bir liste ile oluştur
@@ -51,6 +58,11 @@ def main():
 
     while True:
         try:
+            # Port scanner çalışıyorsa paketi işleme
+            if is_scanner_running():
+                time.sleep(1)  # CPU kullanımını azaltmak için
+                continue
+                
             raw_data, addr = conn.recvfrom(65536)
             dest_mac, src_mac, eth_proto, data = ethernet_frame(raw_data)
             # print('\nEthernet Frame:')
