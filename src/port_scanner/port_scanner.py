@@ -50,7 +50,6 @@ def scan_port(target_port: Tuple[str, int]) -> Tuple[int, bool, str]:
     return port, False, None
 
 def run_scanner():
-    # Scanner başladığında sinyal dosyası oluştur
     with open("scanner_running.signal", "w") as f:
         f.write("1")
     
@@ -133,7 +132,6 @@ def run_scanner():
                 
     except KeyboardInterrupt:
         print("\nExiting program.")
-        # Sinyal dosyasını sil
         try:
             os.remove("scanner_running.signal")
         except:
@@ -141,14 +139,12 @@ def run_scanner():
         sys.exit()
     except socket.error:
         print("\nCould not connect to the target IP")
-        # Sinyal dosyasını sil
         try:
             os.remove("scanner_running.signal")
         except:
             pass
         sys.exit()
-    
-    # Scanner normal şekilde bittiğinde sinyal dosyasını sil
+
     try:
         os.remove("scanner_running.signal")
     except:
