@@ -3,7 +3,7 @@ Bu Kod MacOs Cihazlarda çalışmaz çünkü AF_PACKET soket türü Macos Cihazl
 Kod öalıştırılacaksa Linux cihazlarda çalışır anca.
 
 Packet Sniffer loglarının yazıldığı dosya: logs/packet_sniffer_logs/sniffer_logs.json
-Eğer terminalde gözükmesini istiyorsan printlerin başındaki commentleri kaldır
+Eğer terminalde gözükmesini istiyorsan printlerin başındaki commentleri kaldır ve sadece bu dosyayı çalıştır
 """
 
 import socket
@@ -31,36 +31,30 @@ def main():
     conn = socket.socket(socket.AF_PACKET, socket.SOCK_RAW, socket.ntohs(3))
 
     def write_to_json(packet_data):
-        # Port scanner çalışıyorsa log tutma
         if is_scanner_running():
             return
             
         file_path = 'logs/packet_sniffer_logs/sniffer_logs.json'
         
-        # Dosya yoksa boş bir liste ile oluştur
         if not os.path.exists(file_path):
             with open(file_path, 'w') as f:
                 json.dump([], f)
         
-        # Mevcut verileri oku
         with open(file_path, 'r') as f:
             try:
                 existing_data = json.load(f)
             except json.JSONDecodeError:
                 existing_data = []
         
-        # Yeni veriyi ekle
         existing_data.append(packet_data)
         
-        # Güncellenmiş veriyi yaz
         with open(file_path, 'w') as f:
             json.dump(existing_data, f, indent=2)
 
     while True:
         try:
-            # Port scanner çalışıyorsa paketi işleme
             if is_scanner_running():
-                time.sleep(1)  # CPU kullanımını azaltmak için
+                time.sleep(1)
                 continue
                 
             raw_data, addr = conn.recvfrom(65536)
