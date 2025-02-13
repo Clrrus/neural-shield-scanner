@@ -2,6 +2,10 @@
 
 Bu ağ tarama aracı, belirtilen IP adresleri veya IP aralıklarında port taraması ve paket yakalama yapmanıza olanak sağlar.
 
+# ⚠️ Önemli Bilgilendirme
+
+Bu proje, Project: Neural Shield için Clrrus tarafından oluşturulmuştur. Başka herhangi birinin bunu kullanması kesinlikle yasaktır.
+
 ## 🚀 Özellikler
 
 - Tekli IP taraması
@@ -76,4 +80,4 @@ sudo python src/main.py
 
 ## ⚠️ Bilgilendirme
 
-Bu Ağ Tarayıcısı, Project: Neural Shield için Clrrus tarafından oluşturulmuştur. Başka herhangi birinin bunu kullanması kesinlikle yasaktır.
+Bu sistem, sadece Linux sistemlerde çalışır. Windows veya MacOS desteği yoktur.
