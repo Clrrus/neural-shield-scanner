@@ -90,7 +90,7 @@ def run_scanner():
             for ip in targets:
                 target = str(ip)
                 print(f"\nScanning target: {target}")
-                print("Scanning ports 1-10000...")
+                print(f"Scanning ports {"1-10000..." if config_file['scanner']['port_range_type'] == '1' else "POPULAR PORTS..."}")
                 
                 open_ports = []
                 scan_tasks = []
