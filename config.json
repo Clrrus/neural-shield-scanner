@@ -11,6 +11,7 @@
     "ids" : {
         "syn_threshold" : 20,
         "scan_threshold" : 15,
-        "time_window" : 5
+        "time_window" : 5,
+        "ids_log": 1
     }
 }
