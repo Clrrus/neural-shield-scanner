@@ -5,6 +5,7 @@ from collections import defaultdict
 import os
 import sys
 import json
+from datetime import datetime
 
 with open('config.json', 'r') as f:
     config = json.load(f)
@@ -52,7 +53,7 @@ class IntrusionDetectionSystem:
                     
                     if (self.syn_packets[ip_src]['count'] >= self.syn_threshold and
                         len(self.syn_packets[ip_src]['ports']) < 5):
-                        print(f"[ALERT] SYN Flood attack detected!")
+                        print(f"[ALERT] SYN Flood attack detected! Date: {datetime.now()}")
                         print(f"Source IP: {ip_src}")
                         print(f"Last {self.time_window} seconds: {self.syn_packets[ip_src]['count']} SYN packets")
                         print(f"Number of destination ports: {len(self.syn_packets[ip_src]['ports'])}")
@@ -70,7 +71,7 @@ class IntrusionDetectionSystem:
 
         self.port_scan_tracker[ip_src] = {port: t for port, t in self.port_scan_tracker[ip_src].items() if current_time - t < self.time_window}
         if len(self.port_scan_tracker[ip_src]) >= self.scan_threshold:
-            print(f"[ALERT] Potential port scan attack detected from {ip_src}!")
+            print(f"[ALERT] Potential port scan attack detected from {ip_src}! Date: {datetime.now()}")
             self.port_scan_tracker[ip_src] = {}
 
     def start(self, iface=None):
