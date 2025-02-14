@@ -1,3 +1,7 @@
+"""
+config dosyasından ids_log değişkenini 2 yaparsan loglar terminalde görünür.
+"""
+
 import time
 from scapy.all import sniff, TCP, IP
 from collections import defaultdict
@@ -52,11 +56,17 @@ class IntrusionDetectionSystem:
                     
                     if (self.syn_packets[ip_src]['count'] >= self.syn_threshold and
                         len(self.syn_packets[ip_src]['ports']) < 5):
-                        print(f"[ALERT] SYN Flood attack detected! Date: {datetime.now()}")
-                        print(f"Source IP: {ip_src}")
-                        print(f"Last {self.time_window} seconds: {self.syn_packets[ip_src]['count']} SYN packets")
-                        print(f"Number of destination ports: {len(self.syn_packets[ip_src]['ports'])}")
-                        print("-" * 50)
+                        alert_message = f"""[ALERT] SYN Flood attack detected! Date: {datetime.now()}
+Source IP: {ip_src}
+Last {self.time_window} seconds: {self.syn_packets[ip_src]['count']} SYN packets
+Number of destination ports: {len(self.syn_packets[ip_src]['ports'])}
+{'-' * 50}"""
+                        
+                        if config['ids']['ids_log'] == 1:
+                            with open('logs/ids_logs/ids_logs.txt', 'a') as f:
+                                f.write(alert_message + '\n')
+                        elif config['ids']['ids_log'] == 2:
+                            print(alert_message)
                         
                         self.syn_packets[ip_src] = {
                             'count': 0,
@@ -70,7 +80,14 @@ class IntrusionDetectionSystem:
 
         self.port_scan_tracker[ip_src] = {port: t for port, t in self.port_scan_tracker[ip_src].items() if current_time - t < self.time_window}
         if len(self.port_scan_tracker[ip_src]) >= self.scan_threshold:
-            print(f"[ALERT] Potential port scan attack detected from {ip_src}! Date: {datetime.now()}")
+            alert_message = f"[ALERT] Potential port scan attack detected from {ip_src}! Date: {datetime.now()}"
+            
+            if config['ids']['ids_log'] == 1:
+                with open('logs/ids_logs/ids_logs.txt', 'a') as f:
+                    f.write(alert_message + '\n')
+            elif config['ids']['ids_log'] == 2:
+                print(alert_message)
+                
             self.port_scan_tracker[ip_src] = {}
 
     def start(self, iface=None):
@@ -78,7 +95,12 @@ class IntrusionDetectionSystem:
             print("[!] This program requires root privileges.")
             print("Please run with 'sudo python src/ids/ids.py'")
             sys.exit(1)
-        print("[*] IDS system starting... Packet sniffing started...")
+        start_message ="[*] IDS system starting... Packet sniffing started..."
+        if config['ids']['ids_log'] == 1:
+            with open('logs/ids_logs/ids_logs.txt', 'w') as f:
+                f.write(start_message + '\n')
+        elif config['ids']['ids_log'] == 2:
+            print(start_message)
         try:
             sniff(prn=self.packet_callback, iface=iface, store=False)
         except Exception as e:
