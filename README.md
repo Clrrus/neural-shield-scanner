@@ -48,7 +48,8 @@ Tarama ayarlarını `config.json` dosyası üzerinden yapılandırabilirsiniz:
     "ids" : {
         "syn_threshold" : 20,
         "scan_threshold" : 15,
-        "time_window" : 5
+        "time_window" : 5,
+        "ids_log": 1
     }
 }
 ```
@@ -64,6 +65,7 @@ Tarama ayarlarını `config.json` dosyası üzerinden yapılandırabilirsiniz:
 - `syn_threshold`: SYN paket sayısı eşiği (Değiştirilmesi önerilmez)
 - `scan_threshold`: Tarama eşiği (Değiştirilmesi önerilmez)
 - `time_window`: Zaman aralığı (Değiştirilmesi önerilmez)
+- `ids_log`: Loglama türü (1: Dosyaya yaz, 2: Terminalde görüntüle)
 
 #### Thread Count:
 - `thread_count`: 50 -> 50 thread ile tarama yapılır. (Aynı anda 50 port taranır.) Dezavantajı ise ağınıza yük bindirir, sistem kaynaklarını daha fazla kullanır. (10-30 arası ideal)
