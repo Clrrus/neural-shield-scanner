@@ -1,6 +1,6 @@
 # Network Scanner
 
-Bu ağ tarama aracı, belirtilen IP adresleri veya IP aralıklarında port taraması ve paket yakalama yapmanıza olanak sağlar.
+Bu ağ tarama aracı, belirtilen IP adresleri veya IP aralıklarında port taraması, paket yakalama, nmap port tarama tespiti ve güvenli IP'leri belirlemenize olanak sağlar.
 
 ## ⚠️ Önemli Bilgilendirme
 
