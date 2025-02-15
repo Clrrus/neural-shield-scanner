@@ -3,7 +3,6 @@ from packet_sniffer.packet_sniffer import main as packet_sniffer_main
 from ids.ids import IntrusionDetectionSystem
 from unusual_ip_finder.unusual_ip_finder import main as unusual_ip_finder_main
 import time
-import subprocess
 from threading import Thread
 import json
 
@@ -13,7 +12,7 @@ with open('config.json', 'r') as f:
 def run_packet_sniffer():
     try:
         packet_sniffer_main()
-    except subprocess.CalledProcessError as e:
+    except Exception as e:
         print(f"Packet sniffer error: {e}")
     except KeyboardInterrupt:
         print("Packet sniffer stopping...")
