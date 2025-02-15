@@ -13,6 +13,24 @@ from datetime import datetime
 with open('config.json', 'r') as f:
     config = json.load(f)
 
+def write_to_json(packet_data):
+    file_path = 'logs/ids_logs/ids_logs.json'
+    
+    if not os.path.exists(file_path):
+        with open(file_path, 'w') as f:
+            json.dump([], f)
+    
+    with open(file_path, 'r') as f:
+        try:
+            existing_data = json.load(f)
+        except json.JSONDecodeError:
+            existing_data = []
+    
+    existing_data.append(packet_data)
+    
+    with open(file_path, 'w') as f:
+        json.dump(existing_data, f, indent=2)
+
 class IntrusionDetectionSystem:
     def __init__(self, syn_threshold=20, scan_threshold=15, time_window=5):
         self.syn_threshold = syn_threshold
@@ -83,10 +101,18 @@ Number of destination ports: {len(self.syn_packets[ip_src]['ports'])}
             alert_message = f"[ALERT] Potential port scan attack detected from {ip_src}! Date: {datetime.now()}"
             
             if config['ids']['ids_log'] == 1:
-                with open('logs/ids_logs/ids_logs.txt', 'a') as f:
-                    f.write(alert_message + '\n')
+                packet_data = {
+                    "alert_message": alert_message
+                }
+                write_to_json(packet_data)
+                # with open('logs/ids_logs/ids_logs.txt', 'a') as f:
+                #     f.write(alert_message + '\n')
             elif config['ids']['ids_log'] == 2:
-                print(alert_message)
+                packet_data = {
+                    "alert_message": alert_message
+                }
+                write_to_json(packet_data)
+                # print(alert_message)
                 
             self.port_scan_tracker[ip_src] = {}
 
