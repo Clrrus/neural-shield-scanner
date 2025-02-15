@@ -1,6 +1,7 @@
 from port_scanner.port_scanner import run_scanner
 from packet_sniffer.packet_sniffer import main as packet_sniffer_main
 from ids.ids import IntrusionDetectionSystem
+from unusual_ip_finder.unusual_ip_finder import main as unusual_ip_finder_main
 import time
 import subprocess
 from threading import Thread
@@ -53,6 +54,10 @@ if __name__ == "__main__":
         ids_thread = Thread(target=run_ids)
         ids_thread.daemon = True
         ids_thread.start()
+
+        unusual_ip_finder_thread = Thread(target=unusual_ip_finder_main)
+        unusual_ip_finder_thread.daemon = True
+        unusual_ip_finder_thread.start()
         
         run_port_scanner()
         
