@@ -16,14 +16,14 @@ def log_unusual_ips(unusual_ips):
         timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         log_entry = f"{timestamp}: Unusual IP's detected: {', '.join(unusual_ips)}\n"
         
-        with open("logs/trusted_ip_finder_logs/tursted_ip_logs.txt", 'a') as f:
+        with open("logs/unusual_ip_finder_logs/unusual_ip_logs.txt", 'a') as f:
             f.write(log_entry)
     except Exception as e:
         print(f"Log file could not be written: {str(e)}")
 
 def log_message(message):
     try:
-        with open("logs/trusted_ip_finder_logs/tursted_ip_logs.txt", 'a') as f:
+        with open("logs/unusual_ip_finder_logs/unusual_ip_logs.txt", 'a') as f:
             f.write(message + "")
     except Exception as e:
         print(f"Log file could not be written: {str(e)}")
