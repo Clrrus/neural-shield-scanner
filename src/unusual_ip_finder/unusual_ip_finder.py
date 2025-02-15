@@ -11,24 +11,33 @@ TARGET_RANGE = config["scanner"]["target_range"]
 SCAN_INTERVAL = 60
 
 KNOWN_DEVICES_FILE = "trusted_ips.json"
+LOG_FILE = "logs/trusted_ip_finder_logs/tursted_ip_logs.txt"
+
+def write_log(message):
+    try:
+        os.makedirs(os.path.dirname(LOG_FILE), exist_ok=True)
+        with open(LOG_FILE, "a") as f:
+            f.write(f"{message}\n")
+    except Exception as e:
+        print(f"[!] Log writing error: {e}")
 
 def load_known_devices():
     try:
         if not os.path.exists(KNOWN_DEVICES_FILE):
-            print(f"[!] Warning: {KNOWN_DEVICES_FILE} file not found!")
+            write_log(f"[!] Warning: {KNOWN_DEVICES_FILE} file not found!")
             return []
         
         with open(KNOWN_DEVICES_FILE, "r") as f:
             try:
                 data = json.load(f)
                 if not data.get('known_devices'):
-                    print("[!] Warning: 'known_devices' list is empty or not found!")
+                    write_log("[!] Warning: 'known_devices' list is empty or not found!")
                 return data.get('known_devices', [])
             except json.JSONDecodeError as e:
-                print(f"[!] JSON read error: {e}")
+                write_log(f"[!] JSON read error: {e}")
                 return []
     except Exception as e:
-        print(f"[!] File read error: {e}")
+        write_log(f"[!] File read error: {e}")
         return []
 
 def scan_network(target_range):
@@ -44,30 +53,31 @@ def scan_network(target_range):
 def main():
     try:
         if os.geteuid() != 0:
-            print("[!] This program requires root permissions.")
-            print("Please run with 'sudo python src/unusual_ip_finder/unusual_ip_finder.py'")
+            write_log("[!] This program requires root permissions.")
+            write_log("Please run with 'sudo python src/unusual_ip_finder/unusual_ip_finder.py'")
             sys.exit(1)
-        print("[*] Unusual IP Finder starting...")
+            
+        write_log("[*] Unusual IP Finder starting...")
         
         approved_devices = load_known_devices()
-        print(f"[*] Approved devices: {approved_devices}")
+        write_log(f"[*] Approved devices: {approved_devices}")
         
         while True:
-            print("[*] Scanning network...")
+            write_log("[*] Scanning network...")
             scanned_devices = scan_network(TARGET_RANGE)
-            print(f"[*] {len(scanned_devices)} devices found.")
+            write_log(f"[*] {len(scanned_devices)} devices found.")
             
             for device in scanned_devices:
                 ip = device['ip']
                 if ip not in approved_devices:
                     alert_message = f"[ALERT] Suspicious new device detected! IP: {ip} | MAC: {device['mac']}"
-                    print(alert_message)
+                    write_log(alert_message)
             
             time.sleep(SCAN_INTERVAL)
     except KeyboardInterrupt:
-        print("[*] Unusual IP Finder stopped.")
+        write_log("[*] Unusual IP Finder stopped.")
     except Exception as e:
-        print(f"[!] Error: {e}")
+        write_log(f"[!] Error: {e}")
         time.sleep(5)
         main()
 
