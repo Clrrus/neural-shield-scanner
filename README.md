@@ -1,6 +1,6 @@
 # Network Scanner
 
-Bu ağ tarama aracı, belirtilen IP adresleri veya IP aralıklarında port taraması, paket yakalama, nmap port tarama tespiti ve güvenli IP'leri belirlemenize olanak sağlar.
+Bu ağ tarama aracı, belirtilen IP adresleri veya IP aralıklarında port taraması, paket yakalama, nmap port tarama tespiti ve ağdaki güvenli IP'leri belirlemenize olanak sağlar.
 
 ## ⚠️ Önemli Bilgilendirme
 
@@ -51,6 +51,9 @@ Tarama ayarlarını `config.json` dosyası üzerinden yapılandırabilirsiniz:
         "scan_threshold" : 15,
         "time_window" : 5,
         "ids_log": 1
+    },
+    "unusual_ip_finder" : {
+        "scan_interval" : 60
     }
 }
 ```
@@ -67,6 +70,7 @@ Tarama ayarlarını `config.json` dosyası üzerinden yapılandırabilirsiniz:
 - `scan_threshold`: Tarama eşiği (Değiştirilmesi önerilmez)
 - `time_window`: Zaman aralığı (Değiştirilmesi önerilmez)
 - `ids_log`: Loglama türü (1: Dosyaya yaz, 2: Terminalde görüntüle)
+- `scan_interval`: Güvenli IP tarama aralığı (Varsayılan 60 saniye)
 
 #### Thread Count:
 - `thread_count`: 50 -> 50 thread ile tarama yapılır. (Aynı anda 50 port taranır.) Dezavantajı ise ağınıza yük bindirir, sistem kaynaklarını daha fazla kullanır. (10-30 arası ideal)
