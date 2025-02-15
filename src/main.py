@@ -62,3 +62,5 @@ if __name__ == "__main__":
         run_port_scanner()
     except KeyboardInterrupt:
         print("\nMain program stopping...")
+    except Exception as e:
+        print(f"Main program error: {e}")
