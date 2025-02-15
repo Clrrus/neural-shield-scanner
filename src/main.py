@@ -58,8 +58,7 @@ if __name__ == "__main__":
         unusual_ip_finder_thread = Thread(target=unusual_ip_finder_main)
         unusual_ip_finder_thread.daemon = True
         unusual_ip_finder_thread.start()
-        
+
         run_port_scanner()
-        
     except KeyboardInterrupt:
         print("\nMain program stopping...")
