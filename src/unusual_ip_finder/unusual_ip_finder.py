@@ -2,6 +2,7 @@ from ip_discover.ip_discover import discover_active_ips
 import json
 import time
 import datetime
+import os
 
 with open("trusted_ips.json", "r") as f:
     trusted_ips = json.load(f)
@@ -11,20 +12,47 @@ with open("config.json", "r") as f:
 
 SCAN_INTERVAL = int(config["unusual_ip_finder"]["scan_interval"])
 
+def write_to_json(packet_data):
+    file_path = 'logs/unusual_ip_finder_logs/unusual_ip_logs.json'
+    
+    if not os.path.exists(file_path):
+        with open(file_path, 'w') as f:
+            json.dump([], f)
+    
+    with open(file_path, 'r') as f:
+        try:
+            existing_data = json.load(f)
+        except json.JSONDecodeError:
+            existing_data = []
+    
+    existing_data.append(packet_data)
+    
+    with open(file_path, 'w') as f:
+        json.dump(existing_data, f, indent=2)
+
 def log_unusual_ips(unusual_ips):
     try:
         timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        log_entry = f"{timestamp}: Unusual IP's detected: {', '.join(unusual_ips)}\n"
-        
-        with open("logs/unusual_ip_finder_logs/unusual_ip_logs.txt", 'a') as f:
-            f.write(log_entry)
+        log_entry = f"Unusual IP's detected: {', '.join(unusual_ips)}\n"
+        packet_data = {
+            "date": timestamp,
+            "message": log_entry
+        }
+        write_to_json(packet_data)
+        # with open("logs/unusual_ip_finder_logs/unusual_ip_logs.txt", 'a') as f:
+        #     f.write(log_entry)
+
     except Exception as e:
         print(f"Log file could not be written: {str(e)}")
 
 def log_message(message):
     try:
-        with open("logs/unusual_ip_finder_logs/unusual_ip_logs.txt", 'a') as f:
-            f.write(message + "")
+        # with open("logs/unusual_ip_finder_logs/unusual_ip_logs.txt", 'a') as f:
+        #     f.write(message + "")
+        packet_data = {
+            "message": message
+        }
+        write_to_json(packet_data)
     except Exception as e:
         print(f"Log file could not be written: {str(e)}")
 
