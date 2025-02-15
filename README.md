@@ -15,6 +15,7 @@ Bu proje, Project: Neural Shield için Clrrus tarafından oluşturulmuştur. İz
 - Batch işleme özelliği
 - Packet Sniffer
 - Intrusion Detection System (Port taraması tespiti için)
+- Unusual IP Finder (Güvenli IP'leri belirlemek için)
 
 ## ⚙️ Kurulum
 ```
