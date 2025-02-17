@@ -9,9 +9,28 @@ import os
 import sys
 import json
 from datetime import datetime
+import netifaces
+import socket
 
 with open('config.json', 'r') as f:
     config = json.load(f)
+
+"""Daha sonrası için"""
+def get_ip_adress():
+    try:
+        interfaces = netifaces.interfaces()
+        for interface in interfaces:
+            addresses = netifaces.ifaddresses(interface)
+            if netifaces.AF_INET in addresses:
+                for address in addresses[netifaces.AF_INET]:
+                    ip = address['addr']
+                    if ip != '127.0.0.1':
+                        return ip
+    except:
+        hostname = socket.gethostname()
+        return socket.gethostbyname(hostname)
+    return "Local IP could not be found"
+""""""
 
 def write_to_json(packet_data):
     file_path = 'logs/ids_logs/ids_logs.json'
