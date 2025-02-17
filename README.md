@@ -38,13 +38,13 @@ sudo python src/main.py
 Tarama ayarlarını `config.json` dosyası üzerinden yapılandırabilirsiniz:
 ```
 {
-    "scanner": {
-        "scan_type": "2",
-        "port_range_type": "2",
-        "target": "192.168.1.1",
-        "target_range": "192.168.1.0/24",
-        "thread_count": 150,
-        "batch_size": 200
+    "scanner" : {
+        "scan_type" : "2",
+        "port_range_type" : "2",
+        "target" : "192.168.1.9",
+        "target_range" : "192.168.1.0/24",
+        "thread_count" : 50,
+        "batch_size" : 200
     },
     "ids" : {
         "syn_threshold" : 20,
@@ -54,6 +54,15 @@ Tarama ayarlarını `config.json` dosyası üzerinden yapılandırabilirsiniz:
     },
     "unusual_ip_finder" : {
         "scan_interval" : 60
+    },
+    "trusted_ips_database": {
+        "company_id": 1,
+        "get_from_db": "false",
+        "host": "127.0.0.1", // Veritabanı host'u (değiştirmeyin)
+        "port": "5432", // Veritabanı port'u (değiştirmeyin)
+        "database": "nauralshield", // Veritabanı adı (değiştirmeyin)
+        "user": "postgres", // Veritabanı kullanıcı adı (değiştirmeyin)
+        "password": "200661" // Veritabanı şifresi (değiştirmeyin)
     }
 }
 ```
@@ -66,11 +75,17 @@ Tarama ayarlarını `config.json` dosyası üzerinden yapılandırabilirsiniz:
 - `target_range`: CIDR formatında ağ aralığı
 - `thread_count`: Eşzamanlı thread sayısı
 - `batch_size`: İşlem başına batch boyutu
+
 - `syn_threshold`: SYN paket sayısı eşiği (Değiştirilmesi önerilmez)
 - `scan_threshold`: Tarama eşiği (Değiştirilmesi önerilmez)
 - `time_window`: Zaman aralığı (Değiştirilmesi önerilmez)
 - `ids_log`: Loglama türü (1: Dosyaya yaz, 2: Terminalde görüntüle)
+
 - `scan_interval`: Güvenli IP tarama aralığı (Varsayılan 60 saniye)
+
+- `company_id`: Veritabanından güvenli IP'leri almak için gerekli olan şirket ID'si.
+- `get_from_db`: Güvenli IP'leri veritabanından alıp almayacağınızı belirten parametre. (false -> trusted_ips.json dosyasından alır, true -> veritabanından alır)
+
 
 #### Thread Count:
 - `thread_count`: 50 -> 50 thread ile tarama yapılır. (Aynı anda 50 port taranır.) Dezavantajı ise ağınıza yük bindirir, sistem kaynaklarını daha fazla kullanır. (10-30 arası ideal)
