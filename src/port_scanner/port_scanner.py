@@ -50,8 +50,12 @@ def scan_port(target_port: Tuple[str, int]) -> Tuple[int, bool, str]:
     return port, False, None
 
 def run_scanner():
-    with open("scanner_running.signal", "w") as f:
-        f.write("1")
+    try:
+        with open("scanner_running.signal", "w") as f:
+            f.write("1")
+    except Exception as e:
+        print(f"Scanner Running Signal Error: {e}")
+        return
     
     try:
         MAX_WORKERS = min(config_file["scanner"]["thread_count"], 50)
