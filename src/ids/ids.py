@@ -74,15 +74,22 @@ class IntrusionDetectionSystem:
                     
                     if (self.syn_packets[ip_src]['count'] >= self.syn_threshold and
                         len(self.syn_packets[ip_src]['ports']) < 5):
-                        alert_message = f"""[ALERT] SYN Flood attack detected! Date: {datetime.now()}
-Source IP: {ip_src}
-Last {self.time_window} seconds: {self.syn_packets[ip_src]['count']} SYN packets
-Number of destination ports: {len(self.syn_packets[ip_src]['ports'])}
-{'-' * 50}"""
-                        
+#                         alert_message = f"""[ALERT] SYN Flood attack detected! Date: {datetime.now()}
+# Source IP: {ip_src}
+# Last {self.time_window} seconds: {self.syn_packets[ip_src]['count']} SYN packets
+# Number of destination ports: {len(self.syn_packets[ip_src]['ports'])}
+# {'-' * 50}"""
+                        packet_data = {
+                            "alert_message": f"[ALERT] SYN Flood attack detected! Date: {datetime.now()}",
+                            "source_ip": str(ip_src),
+                            "packet_count": f"{self.syn_packets[ip_src]['count']} SYN packets in {self.time_window} seconds",
+                            "number_of_destination_ports": len(self.syn_packets[ip_src]['ports'])
+                        }
+                        write_to_json(packet_data)
                         if config['ids']['ids_log'] == 1:
-                            with open('logs/ids_logs/ids_logs.txt', 'a') as f:
-                                f.write(alert_message + '\n')
+                            # with open('logs/ids_logs/ids_logs.txt', 'a') as f:
+                            #     f.write(alert_message + '\n')
+                            write_to_json(packet_data)
                         elif config['ids']['ids_log'] == 2:
                             print(alert_message)
                         
@@ -122,9 +129,13 @@ Number of destination ports: {len(self.syn_packets[ip_src]['ports'])}
             print("Please run with 'sudo python src/ids/ids.py'")
             sys.exit(1)
         start_message ="[*] IDS system starting... Packet sniffing started..."
+        packet_data = {
+            "message": start_message
+        }
         if config['ids']['ids_log'] == 1:
-            with open('logs/ids_logs/ids_logs.txt', 'w') as f:
-                f.write(start_message + '\n')
+            # with open('logs/ids_logs/ids_logs.txt', 'w') as f:
+            #     f.write(start_message + '\n')
+            write_to_json(packet_data)
         elif config['ids']['ids_log'] == 2:
             print(start_message)
         try:
