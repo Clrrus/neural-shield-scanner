@@ -16,5 +16,14 @@
     },
     "unusual_ip_finder" : {
         "scan_interval" : 60
+    },
+    "trusted_ips_database": {
+        "company_id": 1,
+        "get_from_db": "false",
+        "host": "127.0.0.1",
+        "port": "5432",
+        "database": "nauralshield",
+        "user": "postgres",
+        "password": "200661"
     }
 }
