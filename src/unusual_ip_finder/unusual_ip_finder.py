@@ -3,12 +3,38 @@ import json
 import time
 import datetime
 import os
+import psycopg2
+from psycopg2 import Error
 
 with open("trusted_ips.json", "r") as f:
     trusted_ips = json.load(f)
 
 with open("config.json", "r") as f:
     config = json.load(f)
+
+def get_trusted_ips_from_db(company_id):
+    try:
+        connection = psycopg2.connect(
+            host=config["trusted_ips_database"]["host"],
+            port=config["trusted_ips_database"]["port"],
+            database=config["trusted_ips_database"]["database"],
+            user=config["trusted_ips_database"]["user"],
+            password=config["trusted_ips_database"]["password"]
+        )
+        cursor = connection.cursor()
+        select_query = f"SELECT ip FROM trustedips WHERE companyid = {company_id}"
+        cursor.execute(select_query)
+        records = cursor.fetchall()
+        return [record[0] for record in records]
+    except (Exception,Error) as e:
+        packet_data = {
+            "message": f"Error getting trusted IPs from database: {str(e)}"
+        }
+        write_to_json(packet_data)
+    finally:
+        if connection:
+            cursor.close()
+            connection.close()
 
 SCAN_INTERVAL = int(config["unusual_ip_finder"]["scan_interval"])
 
@@ -61,8 +87,10 @@ def main(target_range=config["scanner"]["target_range"]):
         while True:
             log_message("[*] Unusual IP Finder starting...\n")
             active_ips = discover_active_ips(target_range)
-            unusual_ips = [ip for ip in active_ips if ip not in trusted_ips["known_devices"]]
-
+            if config["trusted_ips_database"]["get_from_db"] == "false":
+                unusual_ips = [ip for ip in active_ips if ip not in trusted_ips["known_devices"]]
+            else:
+                unusual_ips = [ip for ip in active_ips if ip not in get_trusted_ips_from_db(config["trusted_ips_database"]["company_id"])]
             if unusual_ips:
                 log_message("[*] Unusual IPs detected:\n")
                 log_unusual_ips(unusual_ips)
