@@ -45,6 +45,9 @@ class IntrusionDetectionSystem:
         self.port_scan_tracker = {}
 
     def packet_callback(self, packet):
+        if os.path.exists("scanner_running.signal"):
+            return
+
         if not packet.haslayer(IP) or not packet.haslayer(TCP):
             return
 
