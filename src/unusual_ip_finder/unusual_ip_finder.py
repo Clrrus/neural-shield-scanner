@@ -59,7 +59,7 @@ def write_to_json(packet_data):
 def log_unusual_ips(unusual_ips):
     try:
         timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        log_entry = f"Unusual IP's detected: {', '.join(unusual_ips)}\n"
+        log_entry = f"Unusual IP's detected: {', '.join(unusual_ips)}"
         packet_data = {
             "date": timestamp,
             "message": log_entry
@@ -89,8 +89,11 @@ def main(target_range=config["scanner"]["target_range"]):
             active_ips = discover_active_ips(target_range)
             if config["trusted_ips_database"]["get_from_db"] == "false":
                 unusual_ips = [ip for ip in active_ips if ip not in trusted_ips["known_devices"]]
-            else:
+            elif config["trusted_ips_database"]["get_from_db"] == "true":
                 unusual_ips = [ip for ip in active_ips if ip not in get_trusted_ips_from_db(config["trusted_ips_database"]["company_id"])]
+            else:
+                log_message("[!] Invalid get_from_db value. Please check config.json\n")
+                break
             if unusual_ips:
                 log_message("[*] Unusual IPs detected:\n")
                 log_unusual_ips(unusual_ips)
