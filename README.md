@@ -5,6 +5,7 @@ Bu ağ tarama aracı, belirtilen IP adresleri veya IP aralıklarında port taram
 ## ⚠️ Önemli Bilgilendirme
 
 Port scannner çıktıları terminalde görüntülenir, diğer sistemlerin çıktıları logs dosyası altında toplanır.
+**Bu sistem, sadece Linux sistemlerde çalışır. Windows veya MacOS desteği yoktur.**
 
 ## 🚀 Özellikler
 
@@ -99,7 +100,3 @@ POPULAR_PORTS = [
     9001, 9090, 9100, 9102, 9999, 10000, 10001, 10010, 32768, 32771, 49152, 49153, 49154, 49155, 49156, 49157, 50000
 ]
 ```
-
-## ⚠️ Bilgilendirme
-
-Bu sistem, sadece Linux sistemlerde çalışır. Windows veya MacOS desteği yoktur.
