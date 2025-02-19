@@ -4,7 +4,7 @@ Bu ağ tarama aracı, belirtilen IP adresleri veya IP aralıklarında port taram
 
 ## ⚠️ Önemli Bilgilendirme
 
-Bu proje, Project: Neural Shield için Clrrus tarafından oluşturulmuştur. İzinsiz kullanımı kesinlikle yasaktır.
+Port scannner çıktıları terminalde görüntülenir, diğer sistemlerin çıktıları logs dosyası altında toplanır.
 
 ## 🚀 Özellikler
 
@@ -39,8 +39,8 @@ Tarama ayarlarını `config.json` dosyası üzerinden yapılandırabilirsiniz:
 ```
 {
     "scanner" : {
-        "scan_type" : "2",
-        "port_range_type" : "2",
+        "scan_type" : "range",
+        "port_range_type" : "popular",
         "target" : "192.168.1.9",
         "target_range" : "192.168.1.0/24",
         "thread_count" : 50,
@@ -50,27 +50,18 @@ Tarama ayarlarını `config.json` dosyası üzerinden yapılandırabilirsiniz:
         "syn_threshold" : 20,
         "scan_threshold" : 15,
         "time_window" : 5,
-        "ids_log": 1
+        "ids_log": "config"
     },
     "unusual_ip_finder" : {
         "scan_interval" : 60
-    },
-    "trusted_ips_database": {
-        "company_id": 1,
-        "get_from_db": "false",
-        "host": "127.0.0.1", // Veritabanı host'u (değiştirmeyin)
-        "port": "5432", // Veritabanı port'u (değiştirmeyin)
-        "database": "nauralshield", // Veritabanı adı (değiştirmeyin)
-        "user": "postgres", // Veritabanı kullanıcı adı (değiştirmeyin)
-        "password": "200661" // Veritabanı şifresi (değiştirmeyin)
     }
 }
 ```
 
 ### Yapılandırma Parametreleri
 
-- `scan_type`: Tarama türü (1: Tekli IP, 2: IP aralığı)
-- `port_range_type`: Port tarama türü
+- `scan_type`: Tarama türü (single: Tekli IP, range: IP aralığı)
+- `port_range_type`: Port tarama türü (popular: Popüler portlar, default: 1-10000 portlar)
 - `target`: Tekli IP taraması için hedef adres
 - `target_range`: CIDR formatında ağ aralığı
 - `thread_count`: Eşzamanlı thread sayısı
@@ -79,13 +70,9 @@ Tarama ayarlarını `config.json` dosyası üzerinden yapılandırabilirsiniz:
 - `syn_threshold`: SYN paket sayısı eşiği (Değiştirilmesi önerilmez)
 - `scan_threshold`: Tarama eşiği (Değiştirilmesi önerilmez)
 - `time_window`: Zaman aralığı (Değiştirilmesi önerilmez)
-- `ids_log`: Loglama türü (1: Dosyaya yaz, 2: Terminalde görüntüle)
+- `ids_log`: Loglama türü (config: Dosyaya yaz, terminal: Terminalde görüntüle)
 
 - `scan_interval`: Güvenli IP tarama aralığı (Varsayılan 60 saniye)
-
-- `company_id`: Veritabanından güvenli IP'leri almak için gerekli olan şirket ID'si.
-- `get_from_db`: Güvenli IP'leri veritabanından alıp almayacağınızı belirten parametre. (false -> trusted_ips.json dosyasından alır, true -> veritabanından alır)
-
 
 #### Thread Count:
 - `thread_count`: 50 -> 50 thread ile tarama yapılır. (Aynı anda 50 port taranır.) Dezavantajı ise ağınıza yük bindirir, sistem kaynaklarını daha fazla kullanır. (10-30 arası ideal)
@@ -94,11 +81,11 @@ Tarama ayarlarını `config.json` dosyası üzerinden yapılandırabilirsiniz:
 - `batch_size`: 200 -> Taramayı gruplara ayırır. Örneğin 200 port taranırken 1000 port taranırken 5 grup oluşturur. Her grup sırasıyla taranır. Bellek kullanımını optimize eder ama ağa yük bindirir. (100-500 arası ideal)
 
 #### Port Aralıkları:
-- `port_range_type`: 1 -> Daha fazla port tarandığı için daha yavaş çalışır.
+- `port_range_type`: "default" -> Daha fazla port tarandığı için daha yavaş çalışır.
 ```
 1 ile 10000 arasındaki portlara ek olarak "10010, 32768, 32771, 49152, 49153, 49154, 49155, 49156, 49157, 50000,62078" portları.
 ```
-- `port_range_type`: 2 -> Popüler portlar taranır bu yüzden daha hızlı çalışır.
+- `port_range_type`: "popular" -> Popüler portlar taranır bu yüzden daha hızlı çalışır.
 ```
 POPULAR_PORTS = [
     1, 3, 7, 9, 13, 17, 19, 21, 22, 23, 25, 26, 37, 53, 79, 80, 81, 82, 88, 100, 106, 110, 111, 113, 119, 135, 139, 143, 144, 179, 199, 
