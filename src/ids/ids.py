@@ -89,11 +89,11 @@ class IntrusionDetectionSystem:
                             "number_of_destination_ports": len(self.syn_packets[ip_src]['ports'])
                         }
                         write_to_json(packet_data)
-                        if config['ids']['ids_log'] == 1:
+                        if config['ids']['ids_log'] == "config":
                             # with open('logs/ids_logs/ids_logs.txt', 'a') as f:
                             #     f.write(alert_message + '\n')
                             write_to_json(packet_data)
-                        elif config['ids']['ids_log'] == 2:
+                        elif config['ids']['ids_log'] == "terminal":
                             print(alert_message)
                         
                         self.syn_packets[ip_src] = {
