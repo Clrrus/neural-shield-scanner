@@ -27,7 +27,7 @@ pip install -r requirements.txt
 ## 🔧 Kullanım
 
 1. `config.json` dosyasını düzenleyin
-2. Programı çalıştırın: (**Packet Sniffer İçin Root Yetkisi İstenmektedir**)
+2. Programı çalıştırın: (**Packet Sniffer ve IDS İçin Root Yetkisi İstenmektedir**)
 ```
 sudo python src/main.py
 ```
