@@ -5,7 +5,7 @@ Bu ağ tarama aracı, belirtilen IP adresleri veya IP aralıklarında port taram
 ## ⚠️ Önemli Bilgilendirme
 
 Port scannner çıktıları terminalde görüntülenir, diğer sistemlerin çıktıları logs dosyası altında toplanır.
-**Bu sistem, sadece Linux sistemlerde çalışır. Windows veya MacOS desteği yoktur.**
+**Packet Sniffer, sadece Linux sistemlerde çalışır. Windows veya MacOS desteği yoktur.**
 
 ## 🚀 Özellikler
 
