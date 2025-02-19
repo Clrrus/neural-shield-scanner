@@ -63,11 +63,11 @@ def run_scanner():
         
         scan_type = str(config_file["scanner"]["scan_type"])
 
-        if scan_type not in ['1', '2']:
-            print("Please enter a valid option (1 or 2)")
+        if scan_type not in ['single', 'range']:
+            print("Please enter a valid option (single or range)")
             sys.exit()
 
-        if scan_type == '1':
+        if scan_type == 'single':
             target = str(config_file["scanner"]["target"])
             try:
                 ipaddress.ip_address(target)
@@ -75,7 +75,7 @@ def run_scanner():
             except ValueError:
                 print("Invalid IP address")
                 sys.exit()
-        else:
+        elif scan_type == 'range':
             target_range = str(config_file["scanner"]["target_range"])
             try:
                 # ip_network = ipaddress.ip_network(target_range)
@@ -87,14 +87,14 @@ def run_scanner():
 
         print("-" * 50)
         print("Scan started at: " + str(datetime.now()))
-        print("Scanning target(s): " + (target if scan_type == '1' else target_range))
+        print("Scanning target(s): " + (target if scan_type == 'single' else target_range))
         print("-" * 50)
 
         with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
             for ip in targets:
                 target = str(ip)
                 print(f"\nScanning target: {target}")
-                print(f"Scanning ports {"1-10000..." if config_file['scanner']['port_range_type'] == '1' else "POPULAR PORTS..."}")
+                print(f"Scanning ports {"1-10000..." if config_file['scanner']['port_range_type'] == 'default' else "POPULAR PORTS..."}")
                 
                 open_ports = []
                 scan_tasks = []
@@ -103,11 +103,11 @@ def run_scanner():
                 for port in common_ports:
                     scan_tasks.append((target, port))
                 
-                if config_file["scanner"]["port_range_type"] == "1":
+                if config_file["scanner"]["port_range_type"] == "default":
                     for port in range(1, 10001):
                         if port not in common_ports:
                             scan_tasks.append((target, port))
-                elif config_file["scanner"]["port_range_type"] == "2":
+                elif config_file["scanner"]["port_range_type"] == "popular":
                     for port in POPULAR_PORTS:
                         if port not in common_ports:
                             scan_tasks.append((target, port))
