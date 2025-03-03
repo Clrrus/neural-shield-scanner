@@ -49,7 +49,10 @@ def log_message(message):
     try:
         # with open("logs/unusual_ip_finder_logs/unusual_ip_logs.txt", 'a') as f:
         #     f.write(message + "")
+        timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        
         packet_data = {
+            "date": timestamp,
             "message": message
         }
         write_to_json(packet_data)
@@ -64,9 +67,7 @@ def main(target_range=config["scanner"]["target_range"]):
             unusual_ips = [ip for ip in active_ips if ip not in trusted_ips]
             
             if unusual_ips:
-                log_message("[*] Unusual IPs detected:\n")
                 log_unusual_ips(unusual_ips)
-                log_message(f"[*] {len(unusual_ips)} unusual ip found. Reported to the administrator.\n")
             else:
                 log_message("All active ips are trusted devices.\n")
             time.sleep(SCAN_INTERVAL)
