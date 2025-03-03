@@ -108,21 +108,19 @@ class IntrusionDetectionSystem:
 
         self.port_scan_tracker[ip_src] = {port: t for port, t in self.port_scan_tracker[ip_src].items() if current_time - t < self.time_window}
         if len(self.port_scan_tracker[ip_src]) >= self.scan_threshold:
-            alert_message = f"[ALERT] Potential port scan attack detected from {ip_src}! Date: {datetime.now()}"
+            alert_message = {
+                "alert_message": f"[ALERT] Potential port scan attack detected. {ip_src}! Date: {datetime.now()}",
+                "source_ip": str(ip_src),
+                "packet_count": f"{self.syn_packets[ip_src]['count']} SYN packets in {self.time_window} seconds",
+                "number_of_destination_ports": len(self.port_scan_tracker[ip_src])
+            }
             
-            if config['ids']['ids_log'] == 1:
-                packet_data = {
-                    "alert_message": alert_message
-                }
-                write_to_json(packet_data)
+            if config['ids']['ids_log'] == 'config':
+                write_to_json(alert_message)
                 # with open('logs/ids_logs/ids_logs.txt', 'a') as f:
                 #     f.write(alert_message + '\n')
-            elif config['ids']['ids_log'] == 2:
-                packet_data = {
-                    "alert_message": alert_message
-                }
-                write_to_json(packet_data)
-                # print(alert_message)
+            elif config['ids']['ids_log'] == 'terminal':
+                print(alert_message)
                 
             self.port_scan_tracker[ip_src] = {}
 
@@ -135,11 +133,11 @@ class IntrusionDetectionSystem:
         packet_data = {
             "message": start_message
         }
-        if config['ids']['ids_log'] == 1:
+        if config['ids']['ids_log'] == 'config':
             # with open('logs/ids_logs/ids_logs.txt', 'w') as f:
             #     f.write(start_message + '\n')
             write_to_json(packet_data)
-        elif config['ids']['ids_log'] == 2:
+        elif config['ids']['ids_log'] == 'terminal':
             print(start_message)
         try:
             sniff(prn=self.packet_callback, iface=iface, store=False)
